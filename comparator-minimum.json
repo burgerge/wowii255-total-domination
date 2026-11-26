@@ -1,0 +1,15 @@
+{
+  "challenge_module": "ChallengeMinimum",
+  "solution_module": "SolutionMinimum",
+  "theorem_names": [
+    "WOWII255.smallest_counterexample_order",
+    "WOWII256.smallest_counterexample_order"
+  ],
+  "definition_names": [],
+  "enable_nanoda": true,
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}

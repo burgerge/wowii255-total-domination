@@ -1,0 +1,4 @@
+本包沿用 Google DeepMind Formal Conjectures 中的总支配数定义。
+版权归 Formal Conjectures 作者所有，适用 Apache License 2.0。
+出处为 FormalConjecturesForMathlib/Combinatorics/SimpleGraph/Domination.lean，
+提交 9097e2f90e66d2f6244209cb1c07f7120d17ec53。

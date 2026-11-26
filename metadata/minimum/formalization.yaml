@@ -1,0 +1,100 @@
+{
+  "version": "v0.4",
+  "project": {
+    "name": "WOWII 第 255、256 题的最小反例",
+    "description": "两题最小反例分别恰有 11 和 14 个顶点。完整证明更小的有限连通简单图满足原不等式。",
+    "authors": [
+      "张晨阳"
+    ],
+    "responsible_maintainers": [
+      "张晨阳"
+    ],
+    "license": "Apache-2.0"
+  },
+  "classification": {
+    "arxiv": [
+      "math.CO"
+    ],
+    "msc2020": [
+      "05C69"
+    ]
+  },
+  "sources": [
+    {
+      "title": "Written on the Wall II",
+      "authors": [
+        "Ermelinda DeLaViña"
+      ],
+      "id": "https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/wowiiaii.pdf",
+      "type": "公开猜想目录",
+      "relationship": "formalizes",
+      "note": "沿用第 255、256 题的数学定义，证明相应的精确极值。",
+      "license": "unknown",
+      "author_endorsement": "not-contacted"
+    }
+  ],
+  "related_formalizations": [
+    {
+      "id": "https://github.com/derekblair/math-proofs/pull/51",
+      "relationship": "independent",
+      "note": "Blair 先公开两题的反例。第 255 题见证同构，第 256 题见证有 15 个点。"
+    }
+  ],
+  "status": {
+    "scope": "两题最小反例分别恰有 11 和 14 个顶点。完整证明更小的有限连通简单图满足原不等式。",
+    "sorry_count": 0,
+    "sorry_in_definitions": 0,
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  "automation": {
+    "methods": [
+      {
+        "method": "agent",
+        "models": [
+          "GPT-6"
+        ],
+        "framework": "OpenAI Codex",
+        "tool_setup": "Lean、Mathlib 和独立 Python 整数检查",
+        "cost": {
+          "wall_time": "not tracked",
+          "spend_usd": "not tracked",
+          "hardware": "本地 Windows 工作站",
+          "prompting_notes": "保持原始定义，证明精确极值并审计公理。"
+        }
+      }
+    ],
+    "spend_usd": "not tracked",
+    "notes": "Codex 协助构造、证明推导、Lean 编写与验证。"
+  },
+  "fidelity": {
+    "divergences": "保留原定义和适用范围，证明进一步的精确极值。"
+  },
+  "review": {
+    "status": "self-assessed",
+    "reviewers": [],
+    "notes": "完成数学审计、Lean 编译、依赖检查及独立整数核验。"
+  },
+  "alignment": {
+    "statements": [
+      {
+        "source": "Written on the Wall II 第 255 题及其极值结论",
+        "lean": "WOWII255.smallest_counterexample_order",
+        "module": "ChallengeMinimum",
+        "status": "proved",
+        "note": "两题最小反例分别恰有 11 和 14 个顶点。完整证明更小的有限连通简单图满足原不等式。"
+      },
+      {
+        "source": "Written on the Wall II 第 256 题及其极值结论",
+        "lean": "WOWII256.smallest_counterexample_order",
+        "module": "ChallengeMinimum",
+        "status": "proved",
+        "note": "两题最小反例分别恰有 11 和 14 个顶点。完整证明更小的有限连通简单图满足原不等式。"
+      }
+    ]
+  },
+  "acknowledgements": "Written on the Wall II、Derek Blair、Formal Conjectures、Lean 与 Mathlib。"
+}

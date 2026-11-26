@@ -1,0 +1,28 @@
+name: Palomar 机械预检
+
+on:
+  push:
+    branches: [palomar-wowii255-256]
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - request: wowmin000001
+            options: '{"comparator_config_path":"comparator-minimum.json","formalization_metadata_path":"metadata/minimum/formalization.yaml","authorization_relationship":"I am a responsible author or maintainer"}'
+          - request: wowshp000001
+            options: '{"comparator_config_path":"comparator-sharp.json","formalization_metadata_path":"metadata/sharp/formalization.yaml","authorization_relationship":"I am a responsible author or maintainer"}'
+    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@046554302064b2c83c2b924bea6db87fc5900c68
+    with:
+      repository: ${{ github.repository }}
+      commit: ${{ github.sha }}
+      pipeline_commit: 046554302064b2c83c2b924bea6db87fc5900c68
+      request_id: ${{ matrix.request }}
+      mode: full
+      execution_profile: palomar-standard-v1
+      options: ${{ matrix.options }}

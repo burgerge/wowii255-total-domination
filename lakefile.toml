@@ -1,0 +1,21 @@
+name = "wowii_255_256"
+version = "1.0.0"
+defaultTargets = ["ChallengeMinimum", "ChallengeSharp", "SolutionMinimum", "SolutionSharp"]
+moreLeanArgs = ["-DautoImplicit=false", "-DwarningAsError=true", "-DmaxRecDepth=10000", "-DmaxHeartbeats=1000000"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "56a005855ea17e0b0958f73ec801ae140b0a1679"
+
+[[lean_lib]]
+name = "ChallengeMinimum"
+
+[[lean_lib]]
+name = "ChallengeSharp"
+
+[[lean_lib]]
+name = "SolutionMinimum"
+
+[[lean_lib]]
+name = "SolutionSharp"

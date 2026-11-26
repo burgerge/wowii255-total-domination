@@ -1,0 +1,16 @@
+{
+  "challenge_module": "ChallengeSharp",
+  "solution_module": "SolutionSharp",
+  "theorem_names": [
+    "WOWII255.sharp_coefficient",
+    "WOWII256.sharp_coefficient",
+    "WOWII256.sharp_coefficient_bipartite"
+  ],
+  "definition_names": [],
+  "enable_nanoda": true,
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}
