@@ -108,33 +108,6 @@ theorem edgeNeighborhoodMax_pos_of_edge {u v : V} (h : G.Adj u v) :
     exact Finset.card_pos.mpr ⟨v, hv⟩
   exact hp.trans_le (degree_le_edgeNeighborhoodMax G h)
 
-theorem order_le_totalDomination_mul_max (h : ∀ u, ∃ v, G.Adj u v) :
-    Fintype.card V ≤ G.totalDominationNumber * edgeNeighborhoodMax G := by
-  have h_exists : {n : ℕ | ∃ D : Finset V, G.IsTotalNDominatingSet n D}.Nonempty := by
-    refine ⟨Fintype.card V, Finset.univ, ⟨?_, Finset.card_univ⟩⟩
-    intro u
-    obtain ⟨v, hv⟩ := h u
-    exact ⟨v, Finset.mem_univ _, hv⟩
-  have h_min := Nat.sInf_mem h_exists
-  change ∃ D : Finset V, G.IsTotalNDominatingSet G.totalDominationNumber D at h_min
-  obtain ⟨D, hD⟩ := h_min
-  have h_cover : D.biUnion (fun v => G.neighborFinset v) = Finset.univ := by
-    apply Finset.eq_univ_of_forall
-    intro u
-    obtain ⟨v, hv, huv⟩ := hD.isTotalDominating u
-    exact Finset.mem_biUnion.mpr ⟨v, hv, by simpa only [mem_neighborFinset] using huv.symm⟩
-  calc
-    Fintype.card V = (D.biUnion fun v => G.neighborFinset v).card := by
-      rw [h_cover, Finset.card_univ]
-    _ ≤ ∑ v ∈ D, (G.neighborFinset v).card := Finset.card_biUnion_le
-    _ ≤ ∑ _v ∈ D, edgeNeighborhoodMax G := by
-      apply Finset.sum_le_sum
-      intro u _
-      obtain ⟨v, hv⟩ := h u
-      rw [card_neighborFinset_eq_degree]
-      exact degree_le_edgeNeighborhoodMax G hv
-    _ = G.totalDominationNumber * edgeNeighborhoodMax G := by simp [hD.card_eq]
-
 omit [DecidableEq V] [DecidableRel G.Adj] in
 theorem centerCount_le_order : centerCount G ≤ Fintype.card V := by
   classical
@@ -412,9 +385,10 @@ instance : DecidableRel graph11.Adj := by
   unfold graph11 adj11
   infer_instance
 
-theorem routes (u v : Fin 11) :
+set_option maxHeartbeats 5000000 in
+theorem routes : ∀ u v : Fin 11,
     u = v ∨ graph11.Adj u v ∨ ∃ z, graph11.Adj u z ∧ graph11.Adj z v := by
-  fin_cases u <;> fin_cases v <;> decide
+  decide
 
 theorem short_walk11 (u v : Fin 11) : ∃ p : graph11.Walk u v, p.length ≤ 2 := by
   rcases routes u v with rfl | he | ⟨z, huz, hzv⟩
@@ -450,11 +424,11 @@ theorem center_count11 : centerCount graph11 = 11 := by
       ((eccentricity11 u).trans ((eccentricity11 v).symm.trans hv))
   simp [centerCount, heq]
 
-theorem edge_union11 (u v : Fin 11) (h : graph11.Adj u v) :
+set_option maxHeartbeats 5000000 in
+theorem edge_union11 : ∀ u v : Fin 11, graph11.Adj u v →
     (graph11.neighborFinset u ∪ graph11.neighborFinset v).card = 7 := by
   simp only [neighborFinset_eq_filter]
-  revert h
-  fin_cases u <;> fin_cases v <;> decide
+  decide
 
 theorem edge_neighborhood_max11 : edgeNeighborhoodMax graph11 = 7 := by
   apply le_antisymm
@@ -566,11 +540,11 @@ theorem min_degree_neighborhood_count14 : (minDegreeNeighborhood graph14).card =
     split_ifs <;> decide
   rw [h, Finset.card_univ, Fintype.card_fin]
 
-theorem edgeUnionLe (u v : Fin 14) (h : graph14.Adj u v) :
+set_option maxHeartbeats 5000000 in
+theorem edgeUnionLe : ∀ u v : Fin 14, graph14.Adj u v →
     (graph14.neighborFinset u ∪ graph14.neighborFinset v).card ≤ 9 := by
   simp only [neighborFinset_eq_filter]
-  revert h
-  fin_cases u <;> fin_cases v <;> decide
+  decide
 
 theorem edge_neighborhood_max14 : edgeNeighborhoodMax graph14 = 9 := by
   apply le_antisymm
