@@ -11,12 +11,16 @@ if ($LeanBin) {
 }
 
 $modules = @('WOWII255Data', 'WOWII255', 'WOWII255Incidence', 'WOWII255PairFamily',
-    'WOWII255Sharp', 'WOWII255MinimumLower', 'WOWII255Minimum')
+    'WOWII255Sharp', 'WOWII255MinimumLower', 'WOWII255Minimum', 'WOWII256', 'WOWII256Small')
 $results = @{
-    WOWII255 = @('conjecture255_false')
-    WOWII255Sharp = @('coefficient_valid_of_le_one', 'exists_pair_counterexample', 'sharp_coefficient')
-    WOWII255MinimumLower = @('order_times_two_le_domination_mul_max_of_card_le_ten', 'bound_of_card_le_ten')
-    WOWII255Minimum = @('refutes_bound11', 'smallest_counterexample_order')
+    WOWII255 = @('WOWII255.conjecture255_false')
+    WOWII255Sharp = @('WOWII255.coefficient_valid_of_le_one', 'WOWII255.exists_pair_counterexample',
+        'WOWII255.sharp_coefficient')
+    WOWII255MinimumLower = @('WOWII255.order_times_two_le_domination_mul_max_of_card_le_ten',
+        'WOWII255.bound_of_card_le_ten')
+    WOWII255Minimum = @('WOWII255.refutes_bound11', 'WOWII255.smallest_counterexample_order')
+    WOWII256 = @('WOWII256.conjecture256_false')
+    WOWII256Small = @('WOWII256.refutes_bound14')
 }
 
 Push-Location -LiteralPath $Repository
@@ -39,7 +43,7 @@ try {
 
         $normalized = ($output -join ' ') -replace '\s+', ' '
         foreach ($theorem in $results[$name]) {
-            $expected = "'WOWII255.$theorem' depends on axioms: [propext, Classical.choice, Quot.sound]"
+            $expected = "'$theorem' depends on axioms: [propext, Classical.choice, Quot.sound]"
             if (!$normalized.Contains($expected)) { throw "公理检查不符 $theorem" }
         }
     }
@@ -48,7 +52,7 @@ try {
         & lake env leanchecker -v $name
         if ($LASTEXITCODE -ne 0) { throw "内核重放失败 $name" }
     }
-    Write-Output '七个模块已完成编译、主要结论公理审计和内核重放。'
+    Write-Output "$($modules.Count) 个模块已完成编译、主要结论公理审计和内核重放。"
 } finally {
     Pop-Location
     $env:Path = $oldPath
