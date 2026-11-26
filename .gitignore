@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+/formal-conjectures/
+*.olean
+*.ilean
