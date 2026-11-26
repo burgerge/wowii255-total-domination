@@ -160,16 +160,16 @@ theorem degree_add_two_le [Nontrivial V] (hG : G.Connected)
     rw [Finset.card_insert_of_notMem (G.notMem_neighborFinset_self u),
       card_neighborFinset_eq_degree]
   have hclosed : ∀ ⦃x y⦄, x ∈ A → G.Adj x y → y ∈ A := by
+    clear hG hM h
     intro x y hx hxy
     rcases Finset.mem_insert.mp hx with rfl | hx
     · exact Finset.mem_insert_of_mem ((G.mem_neighborFinset _ _).mpr hxy)
-    · have hux := (G.mem_neighborFinset _ _).mp hx
-      have hcard := (neighborhood_union_le G hux).trans hle
-      rw [← hA] at hcard
-      have heq := Finset.eq_of_subset_of_card_le (closed_neighborhood_subset G hux) hcard
-      change y ∈ insert u (G.neighborFinset u)
-      rw [heq]
-      exact Finset.mem_union_right _ ((G.mem_neighborFinset _ _).mpr hxy)
+    · exact
+        have hux := (G.mem_neighborFinset _ _).mp hx
+        have hcard : _ ≤ A.card := hA.symm ▸ (neighborhood_union_le G hux).trans hle
+        have heq := Finset.eq_of_subset_of_card_le (closed_neighborhood_subset G hux) hcard
+        show y ∈ insert u (G.neighborFinset u) from
+          heq.symm ▸ Finset.mem_union_right _ ((G.mem_neighborFinset _ _).mpr hxy)
   have hfull : A = Finset.univ := Finset.eq_univ_of_forall fun y =>
     let ⟨p⟩ := hG u y
     walk_stays G p hclosed hu
@@ -247,7 +247,7 @@ theorem totalDomination_ge_three_of_max_lt_order [Nontrivial V]
 theorem order_add_three_le_of_path_dominates {a b c : V} (hab : G.Adj a b)
     (hbc : G.Adj b c) (hac : a ≠ c)
     (hD : G.IsTotalDominating ({a, b, c} : Finset V)) :
-    Fintype.card V + 3 ≤ 2 * edgeNeighborhoodMax G := by
+    Fintype.card V + 3 ≤ 2 * edgeNeighborhoodMax G :=
   let X := G.neighborFinset a ∪ G.neighborFinset b
   let Y := G.neighborFinset b ∪ G.neighborFinset c
   have hU : X ∪ Y = Finset.univ := by
@@ -265,9 +265,10 @@ theorem order_add_three_le_of_path_dominates {a b c : V} (hab : G.Adj a b)
   have hI : 3 ≤ (X ∩ Y).card := hcard ▸ Finset.card_le_card hs
   have hX : X.card ≤ edgeNeighborhoodMax G := neighborhood_union_le G hab
   have hY : Y.card ≤ edgeNeighborhoodMax G := neighborhood_union_le G hbc
-  have hsum := Finset.card_union_add_card_inter X Y
-  rw [hU, Finset.card_univ] at hsum
-  omega
+  have hsum : Fintype.card V + (X ∩ Y).card = X.card + Y.card := by
+    rw [← Finset.card_univ (α := V), ← hU]
+    exact Finset.card_union_add_card_inter X Y
+  by omega
 
 omit [Fintype V] [DecidableRel G.Adj] in
 theorem in_domination_triple {a b c : V}
@@ -401,8 +402,7 @@ theorem connected11 : graph11.Connected := by
   intro u v
   exact ⟨(short_walk11 u v).choose⟩
 
-theorem non_neighbor11 (u : Fin 11) : ∃ v, u ≠ v ∧ ¬graph11.Adj u v := by
-  fin_cases u <;> decide
+theorem non_neighbor11 : ∀ u : Fin 11, ∃ v, u ≠ v ∧ ¬graph11.Adj u v := by decide
 
 theorem eccentricity11 (u : Fin 11) : graph11.eccent u = 2 := by
   apply le_antisymm
@@ -441,8 +441,7 @@ theorem edge_neighborhood_max11 : edgeNeighborhoodMax graph11 = 7 := by
 
 def chosen11 : Finset (Fin 11) := {0, 1, 2}
 
-theorem chosen_dominates11 (u : Fin 11) : ∃ v ∈ chosen11, graph11.Adj u v := by
-  fin_cases u <;> decide
+theorem chosen_dominates11 : ∀ u : Fin 11, ∃ v ∈ chosen11, graph11.Adj u v := by decide
 
 theorem total_domination11 : graph11.totalDominationNumber = 3 := by
   apply le_antisymm
@@ -505,9 +504,8 @@ instance : DecidableRel graph14.Adj := by
   unfold graph14 adj14
   infer_instance
 
-theorem hubRoute (v : Fin 14) :
-    v = 1 ∨ graph14.Adj v 1 ∨ ∃ u, graph14.Adj v u ∧ graph14.Adj u 1 := by
-  fin_cases v <;> decide
+theorem hubRoute : ∀ v : Fin 14,
+    v = 1 ∨ graph14.Adj v 1 ∨ ∃ u, graph14.Adj v u ∧ graph14.Adj u 1 := by decide
 
 theorem connected14 : graph14.Connected := by
   have reach (v : Fin 14) : graph14.Reachable v 1 := by
@@ -523,17 +521,18 @@ theorem connected14 : graph14.Connected := by
 def degreeValue14 (u : Fin 14) : ℕ :=
   if u = 0 ∨ u = 2 then 6 else 3
 
-theorem degree14 (u : Fin 14) : graph14.degree u = degreeValue14 u := by
-  rw [← card_neighborFinset_eq_degree, neighborFinset_eq_filter]
-  fin_cases u <;> decide
+theorem degree14 : ∀ u : Fin 14, graph14.degree u = degreeValue14 u := by
+  simp only [← card_neighborFinset_eq_degree, neighborFinset_eq_filter]
+  decide
+
+theorem has_min_degree_neighbor14 : ∀ x : Fin 14,
+    ∃ u, graph14.Adj x u ∧ degreeValue14 u = 3 := by decide
 
 theorem min_degree_neighborhood_count14 : (minDegreeNeighborhood graph14).card = 14 := by
   have h : minDegreeNeighborhood graph14 = Finset.univ := by
     ext v
     simp only [minDegreeNeighborhood, Finset.mem_filter, Finset.mem_univ, true_and, iff_true]
-    have hAdj (x : Fin 14) : ∃ u, graph14.Adj x u ∧ degreeValue14 u = 3 := by
-      fin_cases x <;> decide
-    obtain ⟨u, hvu, hu⟩ := hAdj v
+    obtain ⟨u, hvu, hu⟩ := has_min_degree_neighbor14 v
     refine ⟨u, hvu, fun w => ?_⟩
     rw [degree14, degree14, hu]
     unfold degreeValue14
@@ -563,8 +562,7 @@ def chosen14 : Finset (Fin 14) := {0, 1, 2}
 theorem total_domination14 : graph14.totalDominationNumber = 3 := by
   apply le_antisymm
   · apply Nat.sInf_le
-    have hd (v : Fin 14) : ∃ u ∈ chosen14, graph14.Adj v u := by
-      fin_cases v <;> decide
+    have hd : ∀ v : Fin 14, ∃ u ∈ chosen14, graph14.Adj v u := by decide
     exact ⟨chosen14, ⟨hd, by decide⟩⟩
   · exact totalDomination_ge_three_of_max_lt_order graph14 connected14
       (by simp [edge_neighborhood_max14])
@@ -611,60 +609,61 @@ theorem target_card_lt_order_of_triple {D : Finset V}
     (heq : Fintype.card V + 3 = 2 * edgeNeighborhoodMax G) :
     (minDegreeNeighborhood G).card < Fintype.card V := by
   obtain ⟨a, b, c, hab, hbc, hac, rfl⟩ := domination_triple_path G hD hcard
-  let X := edgeBall G a b
-  let Y := edgeBall G b c
-  have hun := covered_by G hD (X := X ∪ Y) (by
-    intro x hx z hz
-    rcases (by simpa using hx : x = a ∨ x = b ∨ x = c) with rfl | rfl | rfl
-    · exact Finset.mem_union_left _ (Finset.mem_union_left _ hz)
-    · exact Finset.mem_union_left _ (Finset.mem_union_right _ hz)
-    · exact Finset.mem_union_right _ (Finset.mem_union_right _ hz))
-  have hsub : ({a, b, c} : Finset V) ⊆ X ∩ Y := path_in_inter G hab hbc
-  have hi := Finset.card_le_card hsub
-  rw [hcard] at hi
-  have hx : X.card ≤ edgeNeighborhoodMax G := neighborhood_union_le G hab
-  have hy : Y.card ≤ edgeNeighborhoodMax G := neighborhood_union_le G hbc
-  have hs := Finset.card_union_add_card_inter X Y
-  rw [hun, Finset.card_univ] at hs
-  have hcut : X ∩ Y = {a, b, c} :=
-    (Finset.eq_of_subset_of_card_le hsub (by rw [hcard]; omega)).symm
-  have hnb : G.neighborFinset b = {a, c} := by
-    ext u
-    constructor
-    · intro hu
-      have hh : u ∈ X ∩ Y :=
-        Finset.mem_inter.mpr ⟨Finset.mem_union_right _ hu, Finset.mem_union_left _ hu⟩
-      rw [hcut] at hh
-      rcases (by simpa using hh : u = a ∨ u = b ∨ u = c) with ha | hb | hc
-      · simp [ha]
-      · exact (G.notMem_neighborFinset_self b (hb ▸ hu)).elim
-      · simp [hc]
-    · intro hu
-      rcases (by simpa using hu : u = a ∨ u = c) with rfl | rfl <;>
-        simp [hab.symm, hbc]
-  have hdb : G.degree b = 2 := by
-    rw [← card_neighborFinset_eq_degree, hnb]
-    simp [hac]
-  have hxa : X.card ≤ G.degree a + G.degree b := by
-    dsimp [X, edgeBall]
-    simpa only [card_neighborFinset_eq_degree] using
-      Finset.card_union_le (G.neighborFinset a) (G.neighborFinset b)
-  have hyc : Y.card ≤ G.degree b + G.degree c := by
-    dsimp [Y, edgeBall]
-    simpa only [card_neighborFinset_eq_degree] using
-      Finset.card_union_le (G.neighborFinset b) (G.neighborFinset c)
-  have hmiss : b ∉ minDegreeNeighborhood G := by
-    simp only [minDegreeNeighborhood, Finset.mem_filter, Finset.mem_univ, true_and]
-    rintro ⟨u, hbu, hmin⟩
-    have hmem := (G.mem_neighborFinset _ _).mpr hbu
-    rw [hnb] at hmem
-    rcases (by simpa using hmem : u = a ∨ u = c) with rfl | rfl <;>
-      have hb := hmin b <;> omega
-  have hproper : minDegreeNeighborhood G ⊂ Finset.univ := by
-    apply Finset.ssubset_univ_iff.mpr
-    intro h
-    exact hmiss (by rw [h]; exact Finset.mem_univ b)
-  simpa using Finset.card_lt_card hproper
+  exact
+    let X := edgeBall G a b
+    let Y := edgeBall G b c
+    have hun := covered_by G hD (X := X ∪ Y) (by
+      intro x hx z hz
+      rcases (by simpa using hx : x = a ∨ x = b ∨ x = c) with rfl | rfl | rfl <;>
+        simp only [X, Y, edgeBall, Finset.mem_union, hz, true_or, or_true])
+    have hsub : ({a, b, c} : Finset V) ⊆ X ∩ Y := path_in_inter G hab hbc
+    have hi : 3 ≤ (X ∩ Y).card := hcard ▸ Finset.card_le_card hsub
+    have hx : X.card ≤ edgeNeighborhoodMax G := neighborhood_union_le G hab
+    have hy : Y.card ≤ edgeNeighborhoodMax G := neighborhood_union_le G hbc
+    have hs : Fintype.card V + (X ∩ Y).card = X.card + Y.card := by
+      rw [← Finset.card_univ (α := V), ← hun]
+      exact Finset.card_union_add_card_inter X Y
+    have hcut : X ∩ Y = {a, b, c} :=
+      (Finset.eq_of_subset_of_card_le hsub (by rw [hcard]; omega)).symm
+    have hnb : G.neighborFinset b = {a, c} := by
+      clear hD hcard hM heq hac hun hsub hi hx hy hs
+      ext u
+      constructor
+      · intro hu
+        have hh : u ∈ X ∩ Y :=
+          Finset.mem_inter.mpr ⟨Finset.mem_union_right _ hu, Finset.mem_union_left _ hu⟩
+        rw [hcut] at hh
+        rcases (by simpa using hh : u = a ∨ u = b ∨ u = c) with ha | hb | hc
+        · simp [ha]
+        · exact (G.notMem_neighborFinset_self b (hb ▸ hu)).elim
+        · simp [hc]
+      · intro hu
+        rcases (by simpa using hu : u = a ∨ u = c) with rfl | rfl <;>
+          simp [hab.symm, hbc]
+    have hdb : G.degree b = 2 := by
+      rw [← card_neighborFinset_eq_degree, hnb]
+      simp [hac]
+    have hxa : X.card ≤ G.degree a + G.degree b := by
+      dsimp [X, edgeBall]
+      simpa only [card_neighborFinset_eq_degree] using
+        Finset.card_union_le (G.neighborFinset a) (G.neighborFinset b)
+    have hyc : Y.card ≤ G.degree b + G.degree c := by
+      dsimp [Y, edgeBall]
+      simpa only [card_neighborFinset_eq_degree] using
+        Finset.card_union_le (G.neighborFinset b) (G.neighborFinset c)
+    have hmiss : b ∉ minDegreeNeighborhood G := by
+      clear hD hcard hab hbc hac hun hsub hcut
+      simp only [minDegreeNeighborhood, Finset.mem_filter, Finset.mem_univ, true_and]
+      rintro ⟨u, hbu, hmin⟩
+      have hmem := (G.mem_neighborFinset _ _).mpr hbu
+      rw [hnb] at hmem
+      rcases (by simpa using hmem : u = a ∨ u = c) with rfl | rfl <;>
+        have hb := hmin b <;> omega
+    have hproper : minDegreeNeighborhood G ⊂ Finset.univ := by
+      apply Finset.ssubset_univ_iff.mpr
+      intro h
+      exact hmiss (by rw [h]; exact Finset.mem_univ b)
+    show _ from by simpa using Finset.card_lt_card hproper
 
 def HasMatchingPair (D : Finset V) : Prop :=
   ∃ a ∈ D, ∃ b ∈ D, ∃ c ∈ D, ∃ d ∈ D, G.Adj a b ∧ G.Adj c d ∧
@@ -674,19 +673,19 @@ omit [Fintype V] [DecidableRel G.Adj] in
 theorem star_of_no_matching_pair {D : Finset V}
     (hD : G.IsTotalDominating (D : Set V)) (hcard : 3 ≤ D.card)
     (hn : ¬ HasMatchingPair G D) :
-    ∃ r ∈ D, ∀ u ∈ D, u ≠ r → G.Adj r u := by
+    ∃ r ∈ D, ∀ u ∈ D, u ≠ r → G.Adj r u :=
   have touch {a b c d : V} (ha : a ∈ D) (hb : b ∈ D) (hc : c ∈ D) (hd : d ∈ D)
       (hab : G.Adj a b) (hcd : G.Adj c d) : a = c ∨ a = d ∨ b = c ∨ b = d := by
     by_contra! h
     exact hn ⟨a, ha, b, hb, c, hc, d, hd, hab, hcd, h.1, h.2.1, h.2.2.1, h.2.2.2⟩
-  obtain ⟨a, ha⟩ := Finset.card_pos.mp (by omega : 0 < D.card)
-  obtain ⟨b, hb, hab⟩ := hD a
+  let ⟨a, ha⟩ := Finset.card_pos.mp (by omega : 0 < D.card)
+  let ⟨b, hb, hab⟩ := hD a
   have hlt : ({a, b} : Finset V).card < D.card := by
     simp [hab.ne]; omega
-  obtain ⟨c, hc, hcn⟩ := Finset.exists_mem_notMem_of_card_lt_card hlt
+  let ⟨c, hc, hcn⟩ := Finset.exists_mem_notMem_of_card_lt_card hlt
   have hca : c ≠ a := fun h => hcn (by simp [h])
   have hcb : c ≠ b := fun h => hcn (by simp [h])
-  obtain ⟨d, hd, hcd⟩ := hD c
+  let ⟨d, hd, hcd⟩ := hD c
   have hcenter : ∃ r ∈ D, ∃ s ∈ D, ∃ t ∈ D, G.Adj r s ∧ G.Adj r t ∧ s ≠ t := by
     rcases touch ha hb hc hd hab hcd with h | h | h | h
     · exact (hca h.symm).elim
@@ -695,16 +694,18 @@ theorem star_of_no_matching_pair {D : Finset V}
     · exact (hcb h.symm).elim
     · subst d
       exact ⟨b, hb, a, ha, c, hc, hab.symm, hcd.symm, hca.symm⟩
-  obtain ⟨r, hr, s, hs, t, ht, hrs, hrt, hst⟩ := hcenter
-  refine ⟨r, hr, fun u hu hur => ?_⟩
-  by_contra hnru
-  obtain ⟨v, hv, huv⟩ := hD u
-  have hus : u ≠ s := fun h => hnru (h ▸ hrs)
-  have hut : u ≠ t := fun h => hnru (h ▸ hrt)
-  have hvr : v ≠ r := fun h => hnru (h ▸ huv.symm)
-  have h1 := touch hr hs hu hv hrs huv
-  have h2 := touch hr ht hu hv hrt huv
-  grind
+  let ⟨r, hr, s, hs, t, ht, hrs, hrt, hst⟩ := hcenter
+  ⟨r, hr, fun u hu hur => by
+    clear hcard hn a ha b hb hab hlt c hc hcn d hd hcd hca hcb
+    by_contra hnru
+    obtain ⟨v, hv, huv⟩ := hD u
+    exact
+      have hus : u ≠ s := fun h => hnru (h ▸ hrs)
+      have hut : u ≠ t := fun h => hnru (h ▸ hrt)
+      have hvr : v ≠ r := fun h => hnru (h ▸ huv.symm)
+      have h1 := touch hr hs hu hv hrs huv
+      have h2 := touch hr ht hu hv hrt huv
+      by grind⟩
 
 theorem ball_contains_star {D : Finset V} {r x : V}
     (hstar : ∀ u ∈ D, u ≠ r → G.Adj r u) (hrx : G.Adj r x) :
@@ -718,9 +719,9 @@ theorem ball_contains_star {D : Finset V} {r x : V}
 theorem four_star_bound {D : Finset V} (hD : G.IsTotalDominating (D : Set V))
     (hcard : D.card = 4) {r : V} (hr : r ∈ D)
     (hstar : ∀ u ∈ D, u ≠ r → G.Adj r u) :
-    Fintype.card V + 8 ≤ 3 * edgeNeighborhoodMax G := by
+    Fintype.card V + 8 ≤ 3 * edgeNeighborhoodMax G :=
   have hleaves : (D.erase r).card = 3 := by rw [Finset.card_erase_of_mem hr, hcard]
-  obtain ⟨a, b, c, _, _, _, he⟩ := Finset.card_eq_three.mp hleaves
+  let ⟨a, b, c, _, _, _, he⟩ := Finset.card_eq_three.mp hleaves
   have hD' : D = {r, a, b, c} := by
     rw [← Finset.insert_erase hr, he]
   have ha := hstar a (by simp [hD']) (by
@@ -739,32 +740,29 @@ theorem four_star_bound {D : Finset V} (hD : G.IsTotalDominating (D : Set V))
     intro x hx y hy
     rw [hD'] at hx
     rcases (by simpa using hx : x = r ∨ x = a ∨ x = b ∨ x = c) with
-      rfl | rfl | rfl | rfl
-    · exact Finset.mem_union_left _ (Finset.mem_union_left _ (Finset.mem_union_left _ hy))
-    · exact Finset.mem_union_left _ (Finset.mem_union_left _ (Finset.mem_union_right _ hy))
-    · exact Finset.mem_union_left _ (Finset.mem_union_right _ (Finset.mem_union_right _ hy))
-    · exact Finset.mem_union_right _ (Finset.mem_union_right _ hy))
+      rfl | rfl | rfl | rfl <;>
+      simp only [X, Y, Z, edgeBall, Finset.mem_union, hy, true_or, or_true])
   have hX : D ⊆ X := ball_contains_star G hstar ha
   have hY : D ⊆ Y := ball_contains_star G hstar hb
   have hZ : D ⊆ Z := ball_contains_star G hstar hc
   have hi : D ⊆ X ∩ Y := fun x hx => Finset.mem_inter.mpr ⟨hX hx, hY hx⟩
   have hi' : D ⊆ (X ∪ Y) ∩ Z :=
     fun x hx => Finset.mem_inter.mpr ⟨Finset.mem_union_left _ (hX hx), hZ hx⟩
-  have hci := Finset.card_le_card hi
-  have hci' := Finset.card_le_card hi'
-  rw [hcard] at hci hci'
+  have hci : 4 ≤ (X ∩ Y).card := hcard ▸ Finset.card_le_card hi
+  have hci' : 4 ≤ ((X ∪ Y) ∩ Z).card := hcard ▸ Finset.card_le_card hi'
   have hx : X.card ≤ edgeNeighborhoodMax G := neighborhood_union_le G ha
   have hy : Y.card ≤ edgeNeighborhoodMax G := neighborhood_union_le G hb
   have hz : Z.card ≤ edgeNeighborhoodMax G := neighborhood_union_le G hc
   have hp := Finset.card_union_add_card_inter X Y
-  have hq := Finset.card_union_add_card_inter (X ∪ Y) Z
-  rw [hfull, Finset.card_univ] at hq
-  omega
+  have hq : Fintype.card V + ((X ∪ Y) ∩ Z).card = (X ∪ Y).card + Z.card := by
+    rw [← Finset.card_univ (α := V), ← hfull]
+    exact Finset.card_union_add_card_inter (X ∪ Y) Z
+  by omega
 
 theorem four_matching_bound {D : Finset V} (hD : G.IsTotalDominating (D : Set V))
     (hcard : D.card = 4) (hm : HasMatchingPair G D) :
-    Fintype.card V ≤ 2 * edgeNeighborhoodMax G := by
-  obtain ⟨a, ha, b, hb, c, hc, d, hd, hab, hcd, hac, had, hbc, hbd⟩ := hm
+    Fintype.card V ≤ 2 * edgeNeighborhoodMax G :=
+  let ⟨a, ha, b, hb, c, hc, d, hd, hab, hcd, hac, had, hbc, hbd⟩ := hm
   have hsub : ({a, b, c, d} : Finset V) ⊆ D := by
     simp [ha, hb, hc, hd, Finset.insert_subset_iff]
   have hD' := (Finset.eq_of_subset_of_card_le hsub (by rw [hcard]; simp [hab.ne,
@@ -772,29 +770,27 @@ theorem four_matching_bound {D : Finset V} (hD : G.IsTotalDominating (D : Set V)
   let X := edgeBall G a b
   let Y := edgeBall G c d
   have hfull := covered_by G hD (X := X ∪ Y) (by
+    clear hD hcard ha hb hc hd hab hcd hac had hbc hbd hsub
     intro x hx y hy
     rw [hD'] at hx
     rcases (by simpa using hx : x = a ∨ x = b ∨ x = c ∨ x = d) with
-      rfl | rfl | rfl | rfl
-    · exact Finset.mem_union_left _ (Finset.mem_union_left _ hy)
-    · exact Finset.mem_union_left _ (Finset.mem_union_right _ hy)
-    · exact Finset.mem_union_right _ (Finset.mem_union_left _ hy)
-    · exact Finset.mem_union_right _ (Finset.mem_union_right _ hy))
-  have hs := Finset.card_union_le X Y
-  rw [hfull, Finset.card_univ] at hs
+      rfl | rfl | rfl | rfl <;>
+      simp only [X, Y, edgeBall, Finset.mem_union, hy, true_or, or_true])
+  have hs : Fintype.card V ≤ X.card + Y.card :=
+    by simpa only [hfull, Finset.card_univ] using Finset.card_union_le X Y
   have hxy : X.card + Y.card ≤ edgeNeighborhoodMax G + edgeNeighborhoodMax G :=
     Nat.add_le_add (neighborhood_union_le G hab) (neighborhood_union_le G hcd)
-  simpa only [two_mul] using hs.trans hxy
+  (hs.trans hxy).trans_eq (two_mul _).symm
 
 theorem five_matching_bound {D : Finset V} (hD : G.IsTotalDominating (D : Set V))
     (hcard : D.card = 5) (hm : HasMatchingPair G D) :
-    Fintype.card V + 3 ≤ 3 * edgeNeighborhoodMax G := by
-  obtain ⟨a, ha, b, hb, c, hc, d, hd, hab, hcd, hac, had, hbc, hbd⟩ := hm
+    Fintype.card V + 3 ≤ 3 * edgeNeighborhoodMax G :=
+  let ⟨a, ha, b, hb, c, hc, d, hd, hab, hcd, hac, had, hbc, hbd⟩ := hm
   have hfour : ({a, b, c, d} : Finset V).card = 4 := by simp [hab.ne, hcd.ne,
     hac, had, hbc, hbd]
-  obtain ⟨e, he, hen⟩ := Finset.exists_mem_notMem_of_card_lt_card
+  let ⟨e, he, hen⟩ := Finset.exists_mem_notMem_of_card_lt_card
     (show ({a, b, c, d} : Finset V).card < D.card by omega)
-  obtain ⟨f, hf, hef⟩ := hD e
+  let ⟨f, hf, hef⟩ := hD e
   have he' : e ≠ a ∧ e ≠ b ∧ e ≠ c ∧ e ≠ d := by simpa using hen
   have hsub : ({e, a, b, c, d} : Finset V) ⊆ D := by
     simp [ha, hb, hc, hd, he, Finset.insert_subset_iff]
@@ -804,17 +800,15 @@ theorem five_matching_bound {D : Finset V} (hD : G.IsTotalDominating (D : Set V)
   let Y := edgeBall G c d
   let Z := edgeBall G e f
   have hfull := covered_by G hD (X := (X ∪ Y) ∪ Z) (by
+    clear hD hcard ha hb hc hd hab hcd hac had hbc hbd hfour he hen hf hef he' hsub
     intro x hx y hy
     rw [hD'] at hx
     rcases (by simpa using hx : x = e ∨ x = a ∨ x = b ∨ x = c ∨ x = d) with
-      rfl | rfl | rfl | rfl | rfl
-    · exact Finset.mem_union_right _ (Finset.mem_union_left _ hy)
-    · exact Finset.mem_union_left _ (Finset.mem_union_left _ (Finset.mem_union_left _ hy))
-    · exact Finset.mem_union_left _ (Finset.mem_union_left _ (Finset.mem_union_right _ hy))
-    · exact Finset.mem_union_left _ (Finset.mem_union_right _ (Finset.mem_union_left _ hy))
-    · exact Finset.mem_union_left _ (Finset.mem_union_right _ (Finset.mem_union_right _ hy)))
+      rfl | rfl | rfl | rfl | rfl <;>
+      simp only [X, Y, Z, edgeBall, Finset.mem_union, hy, true_or, or_true])
   have hoverlap {u v : V} (huv : G.Adj u v) (hev : G.Adj e v) (hue : u ≠ e)
       (hxy : edgeBall G u v ⊆ X ∪ Y) : 3 ≤ ((X ∪ Y) ∩ edgeBall G e v).card := by
+    clear hD hcard ha hb hc hd hfour he hen hf he' hsub hD' hfull
     have hp := path_in_inter G huv hev.symm
     have hcard₃ : ({u, v, e} : Finset V).card = 3 := by simp [huv.ne, hev.ne.symm, hue]
     rw [← hcard₃]
@@ -823,6 +817,7 @@ theorem five_matching_bound {D : Finset V} (hD : G.IsTotalDominating (D : Set V)
     have h := Finset.mem_inter.mp (hp hx)
     exact Finset.mem_inter.mpr ⟨hxy h.1, by simpa [edgeBall, Finset.union_comm] using h.2⟩
   have hi : 3 ≤ ((X ∪ Y) ∩ Z).card := by
+    clear hD hcard ha hb hc hd hac had hbc hbd hfour he hen hsub hfull
     rw [hD'] at hf
     rcases (by simpa using hf : f = e ∨ f = a ∨ f = b ∨ f = c ∨ f = d) with
       rfl | rfl | rfl | rfl | rfl
@@ -839,9 +834,10 @@ theorem five_matching_bound {D : Finset V} (hD : G.IsTotalDominating (D : Set V)
   have hy : Y.card ≤ edgeNeighborhoodMax G := neighborhood_union_le G hcd
   have hz : Z.card ≤ edgeNeighborhoodMax G := neighborhood_union_le G hef
   have hxy := Finset.card_union_le X Y
-  have hs := Finset.card_union_add_card_inter (X ∪ Y) Z
-  rw [hfull, Finset.card_univ] at hs
-  omega
+  have hs : Fintype.card V + ((X ∪ Y) ∩ Z).card = (X ∪ Y).card + Z.card := by
+    rw [← Finset.card_univ (α := V), ← hfull]
+    exact Finset.card_union_add_card_inter (X ∪ Y) Z
+  by omega
 
 omit [DecidableEq V] in
 theorem target_card_le_order : (minDegreeNeighborhood G).card ≤ Fintype.card V :=
@@ -850,67 +846,70 @@ theorem target_card_le_order : (minDegreeNeighborhood G).card ≤ Fintype.card V
 /-- 至多十三点的图满足第 256 题原不等式。 -/
 theorem bound_of_card_le_thirteen [Nontrivial V] (hG : G.Connected)
     (hN : Fintype.card V ≤ 13) : Bound G := by
-  obtain ⟨v⟩ := hG.nonempty
-  obtain ⟨u, hu⟩ := hG.preconnected.exists_adj_of_nontrivial v
-  have hMpos : (0 : ℝ) < edgeNeighborhoodMax G :=
-    by exact_mod_cast edgeNeighborhoodMax_pos_of_edge G hu
+  have hMpos : (0 : ℝ) < edgeNeighborhoodMax G := by
+    obtain ⟨v⟩ := hG.nonempty
+    obtain ⟨u, hu⟩ := hG.preconnected.exists_adj_of_nontrivial v
+    exact_mod_cast edgeNeighborhoodMax_pos_of_edge G hu
   unfold Bound
   apply (div_le_iff₀ hMpos).mpr
-  obtain ⟨D, hD⟩ := minimum_set G hG
-  have hdc := hD.card_eq
-  have hd := hD.isTotalDominating
   by_contra! hbad
+  obtain ⟨D, hD⟩ := minimum_set G hG
   have hbad' : D.card * edgeNeighborhoodMax G < 2 * (minDegreeNeighborhood G).card := by
-    rw [hdc]
+    rw [hD.card_eq]
     exact_mod_cast hbad
-  have ht := target_card_le_order G
-  have hlt : D.card * edgeNeighborhoodMax G < 2 * Fintype.card V := by omega
-  have hg := totalDomination_ge_two G hd
-  have hm : edgeNeighborhoodMax G < Fintype.card V := by
-    by_contra! h
-    have := Nat.mul_le_mul hg h
-    omega
-  have hm₂ : 2 ≤ edgeNeighborhoodMax G := by have := degree_add_two_le G hG hm v; omega
-  have hdeg (i : V) : G.degree i ≤ edgeNeighborhoodMax G - 2 := by
-    have := degree_add_two_le G hG hm i
-    omega
+  clear hMpos hbad
+  have hd := hD.isTotalDominating
+  clear hD
+  have hlt := hbad'.trans_le (Nat.mul_le_mul_left 2 (target_card_le_order G))
+  have hm : edgeNeighborhoodMax G < Fintype.card V :=
+    lt_of_not_ge fun h =>
+      (Nat.not_lt_of_ge (Nat.mul_le_mul (totalDomination_ge_two G hd) h)) hlt
+  have hdeg (i : V) : G.degree i ≤ edgeNeighborhoodMax G - 2 :=
+    Nat.le_sub_of_add_le (degree_add_two_le G hG hm i)
   have hprod := order_le_domination_times_degree_bound G hd hdeg
-  have hsum : D.card * (edgeNeighborhoodMax G - 2) + 2 * D.card =
-      D.card * edgeNeighborhoodMax G := by
-    calc
-      _ = D.card * (edgeNeighborhoodMax G - 2 + 2) := by ring
-      _ = _ := by rw [Nat.sub_add_cancel hm₂]
-  have hsmall : 2 * D.card < Fintype.card V := by omega
-  have hcases : D.card = 2 ∨ D.card = 3 ∨ D.card = 4 ∨ D.card = 5 ∨ D.card = 6 := by omega
+  have hsmall : 2 * D.card < Fintype.card V := by
+    obtain ⟨v⟩ := hG.nonempty
+    have hm₂ : 2 ≤ edgeNeighborhoodMax G :=
+      (Nat.le_add_left 2 (G.degree v)).trans (degree_add_two_le G hG hm v)
+    have hsum : D.card * (edgeNeighborhoodMax G - 2) + 2 * D.card =
+        D.card * edgeNeighborhoodMax G := by
+      rw [Nat.mul_comm 2, ← Nat.mul_add, Nat.sub_add_cancel hm₂]
+    omega
+  have hcases : D.card = 2 ∨ D.card = 3 ∨ D.card = 4 ∨ D.card = 5 ∨ D.card = 6 :=
+    by have := totalDomination_ge_two G hd; omega
   rcases hcases with h₂ | h₃ | h₄ | h₅ | h₆
   · exact hm.not_ge (order_le_max_of_domination_pair G hd h₂)
-  · have hb := order_add_three_le_of_domination_triple G hd h₃
+  · clear hprod hsmall hdeg hm hG
+    have hb := order_add_three_le_of_domination_triple G hd h₃
     rw [h₃] at hlt hbad'
     have hcases' : (Fintype.card V = 11 ∧ edgeNeighborhoodMax G = 7) ∨
         (Fintype.card V = 13 ∧ edgeNeighborhoodMax G = 8) := by omega
     have hs := target_card_lt_order_of_triple G hd h₃ (by omega) (by omega)
     omega
-  · rw [h₄] at hlt hsmall
-    by_cases hmatch : HasMatchingPair G D
-    · have := four_matching_bound G hd h₄ hmatch
-      omega
-    · obtain ⟨r, hr, hstar⟩ := star_of_no_matching_pair G hd (by omega) hmatch
-      have := four_star_bound G hd h₄ hr hstar
-      omega
-  · rw [h₅] at hlt hprod hsmall
+  · clear hprod hdeg hm hG hbad'
+    rw [h₄] at hlt hsmall
+    exact
+      (em (HasMatchingPair G D)).elim
+        (fun hmatch => by have := four_matching_bound G hd h₄ hmatch; omega)
+        (fun hmatch =>
+          let ⟨r, hr, hstar⟩ := star_of_no_matching_pair G hd (by omega) hmatch
+          by have := four_star_bound G hd h₄ hr hstar; omega)
+  · clear hm hG hbad'
+    rw [h₅] at hlt hprod hsmall
     have hm₅ : edgeNeighborhoodMax G = 5 := by omega
-    by_cases hmatch : HasMatchingPair G D
-    · have := five_matching_bound G hd h₅ hmatch
-      omega
-    · obtain ⟨r, hr, hstar⟩ := star_of_no_matching_pair G hd (by omega) hmatch
-      have hsub : D.erase r ⊆ G.neighborFinset r := by
-        intro x hx
-        obtain ⟨hne, hmem⟩ := Finset.mem_erase.mp hx
-        exact (G.mem_neighborFinset _ _).mpr (hstar x hmem hne)
-      have hh := Finset.card_le_card hsub
-      rw [Finset.card_erase_of_mem hr, h₅, card_neighborFinset_eq_degree] at hh
-      have := hdeg r
-      omega
+    exact
+      (em (HasMatchingPair G D)).elim
+        (fun hmatch => by have := five_matching_bound G hd h₅ hmatch; omega)
+        (fun hmatch =>
+          let ⟨r, hr, hstar⟩ := star_of_no_matching_pair G hd (by omega) hmatch
+          have hsub : D.erase r ⊆ G.neighborFinset r :=
+            fun x hx => (G.mem_neighborFinset _ _).mpr
+              (hstar x (Finset.mem_erase.mp hx).2 (Finset.mem_erase.mp hx).1)
+          have hh : D.card - 1 ≤ G.degree r := by
+            rw [← Finset.card_erase_of_mem hr, ← card_neighborFinset_eq_degree]
+            exact Finset.card_le_card hsub
+          have := hdeg r
+          by omega)
   · rw [h₆] at hlt hprod hsmall
     omega
 
