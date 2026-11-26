@@ -1,6 +1,6 @@
 # Written on the Wall II 第 255、256 题
 
-**第 256 题。** 最小反例恰有 **14 个顶点**，最优普适系数恰为 **1**，而且限制为二分图后仍然锐利。完整证明及 Lean 复现入口见[第 256 题研究说明](wowii256/README.md)。
+两题的最小反例阶数分别为 **11** 和 **14**，最大的有效系数均为 **1**。第 256 题的系数在连通二分图类中也最优。联合 Lean 证书参见下表，数学推导见[第 256 题研究说明](wowii256/README.md)。
 
 ## 第 255 题
 
@@ -22,6 +22,10 @@ Derek Blair 已公开给出与上述 11 点图同构的反例。这里另给出�
 | `WOWII255.conjecture255_false` | `WOWII255.lean` |
 | `WOWII256.refutes_bound14` | `WOWII256Small.lean` |
 | `WOWII256.conjecture256_false` | `WOWII256.lean` |
+| `WOWII256.smallest_counterexample_order` | [WOWII256Minimum.lean](WOWII256Minimum.lean) |
+| `WOWII256.bound_of_card_le_thirteen` | [WOWII256Minimum.lean](WOWII256Minimum.lean) |
+| `WOWII256.sharp_coefficient` | [WOWII256Sharp.lean](WOWII256Sharp.lean) |
+| `WOWII256.sharp_coefficient_bipartite` | [WOWII256Sharp.lean](WOWII256Sharp.lean) |
 
 依赖 [Formal Conjectures 的固定提交](https://github.com/google-deepmind/formal-conjectures/commit/9097e2f90e66d2f6244209cb1c07f7120d17ec53)，其中固定了 Lean 4.33.1 及 Mathlib。脚本按模块编译，审计主要定理的依赖公理，并使用 `leanchecker` 重放内核检查。每条主要定理的公理集合为 `propext`、`Classical.choice`、`Quot.sound`。
 

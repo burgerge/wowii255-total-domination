@@ -11,7 +11,8 @@ if ($LeanBin) {
 }
 
 $modules = @('WOWII255Data', 'WOWII255', 'WOWII255Incidence', 'WOWII255PairFamily',
-    'WOWII255Sharp', 'WOWII255MinimumLower', 'WOWII255Minimum', 'WOWII256', 'WOWII256Small')
+    'WOWII255Sharp', 'WOWII255MinimumLower', 'WOWII255Minimum', 'WOWII256', 'WOWII256Small',
+    'WOWII256Minimum', 'WOWII256Family', 'WOWII256Sharp')
 $results = @{
     WOWII255 = @('WOWII255.conjecture255_false')
     WOWII255Sharp = @('WOWII255.coefficient_valid_of_le_one', 'WOWII255.exists_pair_counterexample',
@@ -21,6 +22,9 @@ $results = @{
     WOWII255Minimum = @('WOWII255.refutes_bound11', 'WOWII255.smallest_counterexample_order')
     WOWII256 = @('WOWII256.conjecture256_false')
     WOWII256Small = @('WOWII256.refutes_bound14')
+    WOWII256Minimum = @('WOWII256.bound_of_card_le_thirteen',
+        'WOWII256.smallest_counterexample_order')
+    WOWII256Sharp = @('WOWII256.sharp_coefficient', 'WOWII256.sharp_coefficient_bipartite')
 }
 
 Push-Location -LiteralPath $Repository

@@ -11,7 +11,7 @@ section
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
-private theorem neighborhood_union_le {u v : V} (h : G.Adj u v) :
+theorem neighborhood_union_le {u v : V} (h : G.Adj u v) :
     (G.neighborFinset u ∪ G.neighborFinset v).card ≤ edgeNeighborhoodMax G := by
   have he : (u, v) ∈ Finset.univ.filter (fun e : V × V => G.Adj e.1 e.2) :=
     Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩
@@ -31,7 +31,7 @@ private theorem walk_stays {A : Finset V} {u v : V} (p : G.Walk u v)
   | nil => exact hu
   | cons he _ ih => exact ih (h hu he)
 
-private theorem degree_add_two_le [Nontrivial V] (hG : G.Connected)
+theorem degree_add_two_le [Nontrivial V] (hG : G.Connected)
     (hM : edgeNeighborhoodMax G < Fintype.card V) (u : V) :
     G.degree u + 2 ≤ edgeNeighborhoodMax G := by
   by_contra h
@@ -63,7 +63,7 @@ private theorem degree_add_two_le [Nontrivial V] (hG : G.Connected)
   exact hM.not_ge hm
 
 omit [DecidableEq V] [DecidableRel G.Adj] in
-private theorem minimum_set [Nontrivial V] (hG : G.Connected) :
+theorem minimum_set [Nontrivial V] (hG : G.Connected) :
     ∃ D : Finset V, G.IsTotalNDominatingSet G.totalDominationNumber D := by
   have h_exists : {n : ℕ | ∃ D : Finset V, G.IsTotalNDominatingSet n D}.Nonempty := by
     refine ⟨Fintype.card V, Finset.univ, ⟨?_, Finset.card_univ⟩⟩
@@ -73,7 +73,7 @@ private theorem minimum_set [Nontrivial V] (hG : G.Connected) :
   exact Nat.sInf_mem h_exists
 
 omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
-private theorem totalDomination_ge_two [Nonempty V] {D : Finset V}
+theorem totalDomination_ge_two [Nonempty V] {D : Finset V}
     (hD : G.IsTotalDominating (D : Set V)) : 2 ≤ D.card := by
   obtain ⟨u, hu, _⟩ := hD (Classical.choice ‹Nonempty V›)
   obtain ⟨v, hv, huv⟩ := hD u
@@ -81,7 +81,7 @@ private theorem totalDomination_ge_two [Nonempty V] {D : Finset V}
   have hle : D.card ≤ 1 := by omega
   exact huv.ne ((Finset.card_le_one.mp hle) u hu v hv)
 
-private theorem order_le_domination_times_degree_bound {D : Finset V}
+theorem order_le_domination_times_degree_bound {D : Finset V}
     (hD : G.IsTotalDominating (D : Set V)) {d : ℕ} (hd : ∀ v, G.degree v ≤ d) :
     Fintype.card V ≤ D.card * d := by
   have hcov : D.biUnion (fun v => G.neighborFinset v) = Finset.univ := by
@@ -98,7 +98,7 @@ private theorem order_le_domination_times_degree_bound {D : Finset V}
       simpa only [card_neighborFinset_eq_degree] using hd v
     _ = D.card * d := by simp
 
-private theorem order_le_max_of_domination_pair {D : Finset V}
+theorem order_le_max_of_domination_pair {D : Finset V}
     (hD : G.IsTotalDominating (D : Set V)) (hcard : D.card = 2) :
     Fintype.card V ≤ edgeNeighborhoodMax G := by
   obtain ⟨a, b, _, rfl⟩ := Finset.card_eq_two.mp hcard
@@ -161,9 +161,10 @@ private theorem in_domination_triple {a b c : V}
   · exact Or.inl hxv
   · exact Or.inr hxv
 
-private theorem order_add_three_le_of_domination_triple {D : Finset V}
+omit [Fintype V] [DecidableRel G.Adj] in
+theorem domination_triple_path {D : Finset V}
     (hD : G.IsTotalDominating (D : Set V)) (hcard : D.card = 3) :
-    Fintype.card V + 3 ≤ 2 * edgeNeighborhoodMax G := by
+    ∃ a b c, G.Adj a b ∧ G.Adj b c ∧ a ≠ c ∧ D = {a, b, c} := by
   obtain ⟨a, b, c, hab, hac, hbc, rfl⟩ := Finset.card_eq_three.mp hcard
   by_cases h₁ : G.Adj a b
   · have hthird : G.Adj c a ∨ G.Adj c b := by
@@ -174,15 +175,19 @@ private theorem order_add_three_le_of_domination_triple {D : Finset V}
         tauto
       rwa [heq]
     rcases hthird with hca | hcb
-    · apply order_add_three_le_of_path_dominates G h₁.symm hca.symm hbc
-      simpa only [Finset.insert_comm] using hD
-    · exact order_add_three_le_of_path_dominates G h₁ hcb.symm hac hD
+    · exact ⟨b, a, c, h₁.symm, hca.symm, hbc, Finset.insert_comm a b {c}⟩
+    · exact ⟨a, b, c, h₁, hcb.symm, hac, rfl⟩
   · have ha := (in_domination_triple G hD rfl).resolve_left h₁
     have hswap : G.IsTotalDominating ({b, a, c} : Finset V) := by
       simpa only [Finset.insert_comm] using hD
     have hb := (in_domination_triple G hswap rfl).resolve_left (fun h => h₁ h.symm)
-    apply order_add_three_le_of_path_dominates G ha hb.symm hab
-    simpa only [Finset.pair_comm] using hD
+    exact ⟨a, c, b, ha, hb.symm, hab, congrArg (insert a) (Finset.pair_comm b c)⟩
+
+theorem order_add_three_le_of_domination_triple {D : Finset V}
+    (hD : G.IsTotalDominating (D : Set V)) (hcard : D.card = 3) :
+    Fintype.card V + 3 ≤ 2 * edgeNeighborhoodMax G := by
+  obtain ⟨a, b, c, hab, hbc, hac, rfl⟩ := domination_triple_path G hD hcard
+  exact order_add_three_le_of_path_dominates G hab hbc hac hD
 
 /-- 十阶及以下满足更强的、以全体顶点数为分子的界。 -/
 theorem order_times_two_le_domination_mul_max_of_card_le_ten [Nontrivial V]

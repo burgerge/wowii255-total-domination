@@ -1,6 +1,6 @@
 # WOWII 第 256 题的最小反例与最优系数
 
-**摘要。** Written on the Wall II 第 256 题的最小反例恰有 **14 个顶点**。将原不等式右侧的系数 2 改为普适常数后，最大的可用系数恰为 **1**。这一常数在连通二分图类中同样最优。本文给出两项结论的组合证明，并提供 14 点和 59 点反例的 Lean 证书。
+**摘要。** Written on the Wall II 第 256 题的最小反例恰有 **14 个顶点**。将原不等式右侧的系数 2 改为普适常数后，最大的可用系数恰为 **1**。这一常数在连通二分图类中同样最优。本文给出两项结论的组合证明及完整 Lean 形式化，并保留 14 点和 59 点反例的 Lean 证书。
 
 设 $G$ 是至少有两个顶点的有限连通简单图。记 $n=|V(G)|$，$A$ 为最小度顶点集合，$N(v)$ 为顶点 $v$ 的开邻域，$N(A)=\bigcup_{v\in A}N(v)$。记 $\gamma_t$ 为总支配数，即使每个顶点都邻接所选顶点的最小集合大小。对每条边 $uv$ 定义 $B(uv)=N(u)\cup N(v)$，令 $M=\max_{uv\in E(G)}|B(uv)|$。原猜想断言 $\gamma_t M\ge 2|N(A)|$。[原目录第 256 题](https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/wowiiaii.pdf#page=149)
 
@@ -69,8 +69,13 @@ $$
 | --- | --- | --- |
 | 14 点反例 | [WOWII256Small.lean](../WOWII256Small.lean) | WOWII256.refutes_bound14 |
 | 59 点二分反例 | [WOWII256.lean](../WOWII256.lean) | WOWII256.conjecture256_false |
+| 最小阶为 14 | [WOWII256Minimum.lean](../WOWII256Minimum.lean) | WOWII256.smallest_counterexample_order |
+| 最大有效系数为 1 | [WOWII256Sharp.lean](../WOWII256Sharp.lean) | WOWII256.sharp_coefficient |
+| 二分图上的最大有效系数为 1 | [WOWII256Sharp.lean](../WOWII256Sharp.lean) | WOWII256.sharp_coefficient_bipartite |
 
-按[仓库首页](../README.md)准备 Lean 4.33.1 和固定版本的依赖后，运行 [Verify.ps1](../Verify.ps1)。脚本编译证书、检查公理依赖并重放内核。两个定理仅依赖 Lean 的 propext、Classical.choice 和 Quot.sound。定理 1 的最小阶下界和定理 2 的通用参数族证明见上文，当前形式化覆盖两个具体反例。
+按[仓库首页](../README.md)准备 Lean 4.33.1 和固定版本的依赖后，运行 [Verify.ps1](../Verify.ps1)。脚本编译证书、检查公理依赖并重放内核。表内定理仅依赖 Lean 的 propext、Classical.choice 和 Quot.sound。
+
+Lean 的锐性证明使用上述二分图的等参数子族 $s=t=m=k^2$。证明使用有理界 $\gamma_tM/|N(A)|\le1+7/k$，从而给每个实系数 $c>1$ 构造有限反例。
 
 运行以下命令可从组合规则独立重建两张图，检查精确参数、Lean 邻接编码与下界证明中的有限算术情形。
 

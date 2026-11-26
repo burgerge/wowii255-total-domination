@@ -9,7 +9,7 @@ from verify_minimum_256 import (
     profile,
     validate_encoding14,
 )
-from verify_transfer_256 import verify, verify_lean_encoding
+from verify_transfer_256 import build_graph, verify, verify_lean_encoding
 
 
 class Conjecture256Test(unittest.TestCase):
@@ -34,6 +34,26 @@ class Conjecture256Test(unittest.TestCase):
         for size in (4, 5):
             with self.subTest(size=size):
                 check_small_domination_structures(size)
+
+    def test_square_batches_sharp_bound(self):
+        for groups in (2, 3):
+            with self.subTest(groups=groups):
+                size = groups * groups
+                adjacency, hub, edges = build_graph(groups, size, size)
+                degrees = {vertex: len(row) for vertex, row in adjacency.items()}
+                delta = min(degrees.values())
+                target = set().union(
+                    *(
+                        row
+                        for vertex, row in adjacency.items()
+                        if degrees[vertex] == delta
+                    )
+                )
+                chosen = [hub, *(("p", i, 0) for i in range(groups))]
+                self.assertEqual(set().union(*(adjacency[v] for v in chosen)), target)
+                self.assertEqual(len(target), len(adjacency))
+                maximum = max(len(adjacency[u] | adjacency[v]) for u, v in edges)
+                self.assertLessEqual(len(chosen) * maximum, (groups + 7) * size * size)
 
 
 if __name__ == "__main__":
