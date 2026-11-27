@@ -1,0 +1,416 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newcommand{\gt}{\gamma_t}
+\newcommand{\repobase}{https://github.com/burgerge/wowii255-total-domination}
+\newcommand{\archivebase}{https://github.com/PalomarArchive/burgerge--wowii255-total-domination--ccc373ad5fc0}
+\newcommand{\catalogue}{https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/index.html}
+
+\title{Minimum Counterexample Orders and Sharp Coefficients\\
+       for Two Total Domination Conjectures}
+\author{Chenyang Zhang}
+\date{27 November 2026}
+\hypersetup{
+  pdftitle={Minimum Counterexample Orders and Sharp Coefficients for Two Total Domination Conjectures},
+  pdfauthor={Chenyang Zhang}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Conjectures 255 and 256 of \emph{Written on the Wall II} propose
+lower bounds on the total domination number of a connected graph in
+terms of its center and the neighborhood of its minimum-degree vertices,
+respectively. We prove that the minimum counterexample orders are
+\(11\) and \(14\). In each inequality the largest valid universal
+coefficient is \(1\), and the normalized ratio has infimum \(1\)
+even over connected bipartite graphs. The proofs use neighborhood
+covering arguments and two explicit graph families. Lean
+formalizations accompany the minimum-order and sharpness results.
+\end{abstract}
+
+\section{The conjectures and results}
+
+Let \(G\) be a finite connected simple graph of order \(n\ge 2\).
+Write \(N(v)\) for the open neighborhood of \(v\), and
+\(N(S)=\bigcup_{v\in S}N(v)\) for any vertex set \(S\).
+A set \(D\) is total dominating when \(N(D)=V(G)\). In particular,
+the vertices in \(D\) must also have neighbors in \(D\).
+The minimum size of such a set is the total domination number
+\(\gt(G)\). For an edge \(uv\) write \(B(uv)=N(u)\cup N(v)\) and set
+\[
+ M(G)=\max_{uv\in E(G)}|B(uv)|.
+\]
+The set \(B(uv)\) includes both endpoints of the edge. Let \(C(G)\)
+be the set of vertices of minimum eccentricity, and let \(A(G)\)
+be the set of vertices of minimum degree.
+
+The two conjectures in DeLaVi\~na's catalogue~\cite{wowii} take the
+following form after multiplication by the positive denominator \(M(G)\).
+\begin{align}
+ \gt(G)M(G)&\ge 2|C(G)|,   \tag{255}\label{eq:255}\\
+ \gt(G)M(G)&\ge 2|N(A(G))|. \tag{256}\label{eq:256}
+\end{align}
+Blair published an eleven-vertex counterexample to
+\eqref{eq:255} and a fifteen-vertex counterexample to
+\eqref{eq:256}~\cite{blair255,blair256}. Earlier public notes
+give counterexample families for both conjectures~\cite{priorfamilies}.
+For \eqref{eq:256}, the catalogue records Tony Newton's fourteen-vertex
+witness, a proof of its minimality, and an extremal-coefficient result
+submitted on 21 November 2026~\cite{newton256}. The unrestricted
+optimum \(1\) for \eqref{eq:256} also appears in the 19 November
+manuscript of the Graffiti.pc Conjecture 256 repository
+contributors~\cite{prior256}, using graphs with triangles.
+
+We give complete proofs of the two minimum orders and two sharp
+coefficients. In particular, the construction for \eqref{eq:256}
+shows that the coefficient stays sharp on connected bipartite
+graphs. The formalization includes both minimum orders and the
+bipartite strengthening for \eqref{eq:256}.
+
+\begin{theorem}\label{thm:min}
+The minimum orders of counterexamples to \eqref{eq:255} and
+\eqref{eq:256} are \(11\) and \(14\), respectively. Every graph
+of order \(2\le n\le 10\) satisfies the stronger inequality
+\(\gt(G)M(G)\ge 2n\).
+\end{theorem}
+
+\begin{theorem}\label{thm:sharp}
+Let \(T(G)\) be either \(C(G)\) or \(N(A(G))\), and let \(\alpha\) be real.
+The inequality \(\gt(G)M(G)\ge\alpha|T(G)|\) holds for every
+finite connected simple graph of order at least two precisely
+when \(\alpha\le 1\). For each choice of \(T\), the ratio
+\(\gt(G)M(G)/|T(G)|\) is strictly greater than \(1\) on every
+such graph and tends to \(1\) along a family of connected
+bipartite graphs.
+\end{theorem}
+
+\section{Neighborhood covering bounds}
+
+Write \(g=\gt(G)\) and \(M=M(G)\), and take a minimum total dominating
+set \(D\). The induced graph \(G[D]\) has no isolated vertex.
+If a collection of its edges covers \(D\), their sets \(B(uv)\)
+cover \(V(G)\). In particular, if \(g=2\), then \(M=n\).
+
+\begin{lemma}\label{lem:degree}
+If \(M<n\), then \(\deg(u)\le M-2\) for every vertex \(u\).
+\end{lemma}
+
+\begin{proof}
+Suppose that \(Q=\{u\}\cup N(u)\) has size at least \(M\).
+For every \(v\in N(u)\) we have \(Q\subseteq B(uv)\), so the
+definition of \(M\) forces \(Q=B(uv)\). Thus all neighbors of
+vertices of \(Q\) belong to \(Q\). Connectedness gives
+\(Q=V(G)\), contradicting \(M<n\).
+\end{proof}
+
+If \(gM<2n\), then \(g\ge 2\) gives \(M<n\), and the preceding
+observations give \(g\ge 3\). The sets \(N(v)\) for \(v\in D\)
+cover the graph, so Lemma~\ref{lem:degree} implies
+\begin{equation}\label{eq:cover}
+ n\le g(M-2),\qquad n+2g\le gM<2n,\qquad 2g<n.
+\end{equation}
+If \(g=3\), we can label \(D=\{a,b,c\}\) with \(ab,bc\in E(G)\).
+The two sets \(B(ab),B(bc)\) cover the graph and both contain \(D\).
+Consequently
+\begin{equation}\label{eq:path}
+ n+3\le 2M.
+\end{equation}
+In the equality case, the two sets each have size \(M\) and
+intersect exactly in \(D\). In particular \(N(b)=\{a,c\}\),
+as \(N(b)\) is contained in their intersection.
+
+\section{Minimum counterexample orders}
+
+\subsection{An eleven-vertex witness for Conjecture 255}
+
+For \(s\ge 2\) let \(H_s\) have vertices \(a,b,c\) and
+\(x_i,y_i\) for \(1\le i\le s\). Its edges are
+\[
+ ab,\quad bc,\quad ax_i,\quad x_i y_i,\quad y_i c,\quad
+ x_i x_j \quad(1\le i<j\le s).
+\]
+The path arrangement without the clique on the \(x_i\) occurs in the
+catalogue's example for the neighboring Conjecture 254~\cite{wowii254}.
+The family for \(s\ge4\) appears in~\cite{priorfamilies}. An equivalent
+description in~\cite{evan255} subdivides each edge joining a vertex of
+the clique \(\{a,x_1,\ldots,x_s\}\) to the hub \(c\). The case \(s=4\)
+gives Blair's example~\cite{blair255}.
+
+All distances in \(H_s\) are at most two. The \(x_i\) form a clique,
+the \(y_i\) share the neighbor \(c\), and for \(i\ne j\) the pair
+\(x_i,y_j\) is linked by \(x_j\). The pairs \(a,y_i\), \(b,x_i\),
+\(b,y_i\), and \(c,x_i\) use \(x_i,a,c,y_i\), respectively, as
+common neighbors. The pair \(a,c\) uses \(b\). As the largest
+degree is \(s+1<2s+2\), every vertex has eccentricity exactly
+two and \(|C(H_s)|=2s+3\).
+
+With \(X=\{x_1,\ldots,x_s\}\) and \(Y=\{y_1,\ldots,y_s\}\), the
+open neighborhoods of \(a,b,c\) are \(X\cup\{b\}\), \(\{a,c\}\),
+and \(Y\cup\{b\}\). Those of \(x_i,y_i\) are
+\((X\setminus\{x_i\})\cup\{a,y_i\}\) and \(\{x_i,c\}\).
+Their unions at the six edge types all have size \(s+3\), giving
+\(M(H_s)=s+3\). The set \(\{a,b,c\}\) totally dominates \(H_s\),
+and \(M(H_s)<2s+3\) excludes a total dominating pair. Thus
+\[
+ \gt(H_s)=3,\qquad \frac{\gt(H_s)M(H_s)}{|C(H_s)|}
+   =\frac{3(s+3)}{2s+3}.
+\]
+For \(s=4\) this gives \(3\cdot7=21<22\). The examples with \(s\ge
+4\) all violate \eqref{eq:255}. Equation~\eqref{eq:path} also
+shows that \(3/2\) is the infimum of this ratio among graphs with
+\(g=3\), attained in the limit \(s\to\infty\).
+
+\subsection{The lower bound for Conjecture 255}
+
+Suppose \(n\le10\) and \(gM<2n\). By \eqref{eq:cover}, we have
+\(g\in\{3,4\}\). For \(g=3\), \eqref{eq:path} and \(3M<2n\)
+give \(3(n+3)<4n\), so \(n=10\). Then \(M\ge7\), contradicting
+\(3M<20\). For \(g=4\), the inequality \(4M<2n\le20\) gives
+\(M\le4\), and \(n\le4(M-2)\le8\), contradicting \(2g<n\).
+This proves the stronger lower bound \(gM\ge2n\) and establishes
+the claimed minimum order for \eqref{eq:255}.
+
+\subsection{A fourteen-vertex witness for Conjecture 256}
+
+We use Newton's witness as recorded in the catalogue~\cite{newton256}.
+Take a path \(a,b,c\) and a disjoint cycle \(z_0,z_1,\ldots,z_{10}\)
+in cyclic order. Add the edges \(bz_0\), \(az_i\) for \(1\le i\le5\),
+and \(cz_i\) for \(6\le i\le10\). The resulting graph is connected.
+The vertices \(a,c\) have degree \(6\), and every other vertex has
+degree \(3\). Every vertex has a neighbor of degree \(3\), so
+\(N(A(G))=V(G)\). Each edge joins vertices whose degrees sum to
+at most \(9\). At \(ab\) the neighborhoods of its endpoints
+are disjoint and have sizes \(6\) and \(3\), so \(M=9\).
+The path vertices form a total dominating set, and \(M<14\)
+excludes a total dominating pair. Hence \(g=3\), and
+\(gM=27<28=2|N(A(G))|\).
+
+\subsection{The lower bound for Conjecture 256}
+
+Suppose \(n\le 13\) and \(gM<2|N(A(G))|\le 2n\).
+By \eqref{eq:cover}, \(g\) is one of \(3,4,5,6\).
+We use the following observation for the middle two cases.
+In a graph on at least four vertices with no isolated vertices,
+if any two edges intersect then the graph is a star. Indeed, take
+two edges \(xy,xz\). Any edge avoiding \(x\) must be \(yz\).
+If \(yz\) is present, an edge incident to a vertex outside the
+triangle cannot intersect all its edges. The absence of isolated
+vertices excludes this, so every edge is incident to \(x\).
+
+\paragraph{\(g=3\).}
+By \eqref{eq:path}, \(n+3\le2M\), and by assumption \(3M<2n\le26\).
+These bounds imply \(M\in\{7,8\}\). If \(M=7\), then \(n=11\),
+and if \(M=8\), then \(n=13\). In both cases equality holds
+in \eqref{eq:path}. With \(D=\{a,b,c\}\) as above, we have
+\(N(b)=\{a,c\}\) and \(|B(ab)|=|B(bc)|=M\). Thus
+\(\deg(a),\deg(c)\ge M-2\ge5\), while \(\delta(G)\le\deg(b)=2\).
+Neither neighbor of \(b\) has minimum degree, so \(b\notin N(A(G))\).
+For both pairs \((n,M)\), this gives
+\(3M\ge2(n-1)\ge2|N(A(G))|\), a contradiction.
+
+\paragraph{\(g=4\).}
+Two disjoint edges of \(G[D]\) would cover \(D\) and give \(n\le2M\),
+contradicting \(4M<2n\). Thus \(G[D]\) is a four-vertex star.
+The three sets \(B(uv)\) for its edges cover \(V(G)\) and each
+contains \(D\), giving \(n\le3M-8\). The bound \(4M<2n\le26\)
+gives \(M\le6\). If \(M\le5\), then \(n\le7\), contradicting
+\(2g<n\). If \(M=6\), then \(n\le10\) and \(4M<2n\) forces
+\(n>12\), again a contradiction.
+
+\paragraph{\(g=5\).}
+From \(5M<2n\le26\) and \(10<n\le5(M-2)\) we obtain \(M=5\)
+and \(n=13\). Every vertex has degree at most three, so \(G[D]\)
+cannot be a five-vertex star. Take two disjoint edges and an edge
+joining the fifth vertex to a neighbor in \(D\). The three edges
+cover \(D\). Two of them intersect, and the two corresponding
+sets \(B(uv)\) have at least the three vertices of their union of
+endpoints in common. It follows that \(n\le3M-3=12\).
+
+\paragraph{\(g=6\).}
+The bound \(6M<2n\le26\) gives \(M\le4\), so \(n\le6(M-2)\le12\)
+contradicts \(2g<n\).
+
+This excludes counterexamples on at most thirteen vertices and
+completes the proof of Theorem~\ref{thm:min}.
+
+\section{The sharp coefficients}
+
+For every \(v\in V(G)\), choose a neighbor \(w\). Then \(v\in N(w)\)
+and \(v\notin N(v)\), so \(\deg(v)+1\le|B(vw)|\le M\).
+For either target set \(T(G)\), the neighborhood cover by \(D\) yields
+\begin{equation}\label{eq:strict}
+ |T(G)|\le n\le\sum_{v\in D}\deg(v)\le g(M-1)<gM.
+\end{equation}
+Both target sets are nonempty. This proves that coefficient \(1\)
+is valid and that equality in the normalized ratio is impossible.
+The two families below prove sharpness.
+
+\subsection{The center}
+
+Take integers \(r\ge2\) and \(m\ge1\). Let
+\(I=\{a_1,\ldots,a_r,b_1,\ldots,b_r\}\).
+Make a bipartite incidence graph with point vertices \(I\times I\).
+For each label \(i\in I\), make \(m\) distinct block vertices for
+\[
+ S_i=\{(x,y)\in I\times I: x=i\ \text{or}\ y=i\}.
+\]
+Add two large blocks whose point sets are
+\((I\times I)\setminus\{(a_1,a_1)\}\) and
+\((I\times I)\setminus\{(b_1,a_1)\}\). Adjacency is point
+membership in a block.
+
+Two points share a large block except for the two distinct omitted
+points, which share a small block of label \(a_1\).
+Two small blocks of labels \(i,j\) contain \((i,j)\).
+A small block of label \(i\) and either large block contain
+\((i,b_1)\), and both large blocks contain \((b_1,b_1)\).
+It follows that distances within either part are at most two.
+Each block has a neighbor, so distances between the parts are at
+most three. Each point misses a small block of a label absent from
+its coordinates, and each block misses at least one point.
+Nonadjacent vertices in opposite parts have distance at least three.
+The graph is therefore connected and every vertex has eccentricity
+three. In particular \(|C(G)|=4r^2+2+2rm\).
+
+The \(r\) points \((a_i,b_i)\) meet all small blocks. Together with
+the two large blocks they form a total dominating set. Thus \(g\le
+r+2\). The degrees of points and blocks are bounded by \(2m+2\)
+and \(4r^2\), respectively, so \(M\le2m+4r^2+2\).
+Set \(Q=4r^2+2\) and \(m=rQ\). For \(r\ge2\),
+\[
+ (r+2)(2m+Q)=(2r^2+5r+2)Q\le(2r+6)m.
+\]
+Hence \(1<gM/|C(G)|\le1+3/r\). Taking \(r\to\infty\) proves
+sharpness for the center.
+
+\subsection{The neighborhood of the minimum-degree vertices}\label{sec:minimum-degree-family}
+
+Choose integers \(k,s,t\ge2\). In each of \(k\) disjoint groups,
+take \(s\) original left vertices and \(st\) ordinary right
+vertices, with all edges between these two sets. Partition the
+ordinary right vertices into \(t\) batches of size \(s\).
+Add one left vertex per batch and join it to the right vertices
+in that batch. Finally add a right vertex \(z\), adjacent to every
+left vertex in all groups. The graph is bipartite and connected.
+
+The degrees of the original left vertices, batch left vertices,
+ordinary right vertices, and \(z\) are \(st+1,s+1,s+1,k(s+t)\),
+respectively. The vertices of minimum degree are the batch left
+vertices and the ordinary right vertices. Every vertex has a
+neighbor of minimum degree, giving
+\[
+ |N(A(G))|=k(st+s+t)+1.
+\]
+Every total dominating set contains at least one left vertex per
+group to cover its ordinary right vertices, and at least one right
+vertex to cover left vertices. One original left vertex per group
+together with \(z\) suffices, so \(g=k+1\).
+
+The neighborhoods of adjacent vertices in a bipartite graph are
+disjoint. The largest degrees in the left and right parts occur at
+an original left vertex and \(z\), respectively, and those
+vertices are adjacent. Hence \(M=st+1+k(s+t)\).
+For example, \((k,s,t)=(2,4,5)\) gives a bipartite graph of order
+\(59\) with \(gM=117<118=2|N(A(G))|\).
+For \(s=t=k^2\) the ratio is
+\[
+ \frac{\gt(G)M(G)}{|N(A(G))|}
+  =\frac{(k+1)(k^4+2k^3+1)}{k^5+2k^3+1}\longrightarrow 1
+       \qquad(k\to\infty).
+\]
+Together with \eqref{eq:strict}, this proves the remaining part of
+Theorem~\ref{thm:sharp}.
+
+\section{Formal verification and availability}
+
+The Lean development proves both minimum orders, both sharp
+coefficients, and the sharp coefficient for Conjecture 256 when
+restricted to bipartite graphs. The formal proof for Conjecture 256
+uses the equal-parameter subfamily from
+Section~\ref{sec:minimum-degree-family} and a rational upper bound
+tending to one. The public repository provides a theorem index
+and independent integer checks of the finite witnesses~\cite{code}.
+
+The Palomar registrations use fixed source snapshots checked by the Lean
+kernel and the independent NanoDa kernel.
+\begin{description}
+ \item[Sharp coefficients.]
+ \href{\archivebase/tree/f1808b7d12e18b22b003b11acf0b3668f24d0bf4}{\texttt{PALOMAR-2026-11-27-000006}}.
+ \item[Minimum orders.]
+ \href{\archivebase/tree/fd8be52bd12973419e94c1a7471aa7dc508a9c3f}{\texttt{PALOMAR-2026-11-27-000011}}.
+\end{description}
+The joint source release is available at
+\href{https://doi.org/10.5281/zenodo.24567987}{DOI 10.5281/zenodo.24567987}.
+
+\paragraph{Use of generative AI.}
+OpenAI Codex was used in developing constructions and proofs,
+formalizing and checking the results in Lean, and preparing the manuscript.
+
+\begingroup
+\small
+\begin{thebibliography}{9}
+
+\bibitem{wowii}
+E.~DeLaVi\~na,
+\emph{Written on the Wall II: Conjectures of Graffiti.pc},
+Conjectures 255 and 256, University of Houston--Downtown.
+\href{\catalogue}{Online catalogue}.
+
+\bibitem{wowii254}
+E.~DeLaVi\~na,
+\emph{Written on the Wall II}, Conjecture 254 and its
+\href{https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/cedalm254.jpg}{counterexample diagram}.
+
+\bibitem{blair255}
+D.~Blair, \emph{An 11-vertex counterexample to Graffiti.pc
+Conjecture 255}, public proof and Lean certificate, 25 November 2026.
+\href{https://github.com/derekblair/math-proofs/blob/af6904cc3fa537b5c4dcea9561b24b69177c6ee1/research/lean-verified-2026-11-25/graffiti-255/PROOF255.md}{Fixed source}.
+
+\bibitem{blair256}
+D.~Blair, \emph{A 15-vertex counterexample to Graffiti.pc
+Conjecture 256}, public proof and Lean certificate, 25 November 2026.
+\href{https://github.com/derekblair/math-proofs/blob/af6904cc3fa537b5c4dcea9561b24b69177c6ee1/research/lean-verified-2026-11-25/graffiti-256/PROOF.md}{Fixed source}.
+
+\bibitem{priorfamilies}
+\texttt{f8bsd9yqgp-maker}, \emph{Solved Conjectures and Solved Math},
+24 November 2026. Notes on
+\href{https://github.com/f8bsd9yqgp-maker/Solved-conjectures-/blob/9a49179c1217e4e260e24b9d5d506432d1b328eb/proofs/graffiti-pc-255/README.md}{Conjecture 255}
+and
+\href{https://github.com/f8bsd9yqgp-maker/Solved-conjectures-/blob/9a49179c1217e4e260e24b9d5d506432d1b328eb/proofs/graffiti-pc-256/README.md}{Conjecture 256}.
+
+\bibitem{evan255}
+EvanDashRust, \emph{Graffiti.pc Conjecture 255 is false},
+Conjecture-Killers, 25 November 2026.
+\href{https://github.com/EvanDashRust/Conjecture-Killers/blob/1c777ae198b5a9fcddc69968232d0eddd4138f80/Results/Graffiti255/README.md}{Fixed source}.
+
+\bibitem{newton256}
+T.~Newton, results submitted to the \emph{Written on the Wall II}
+catalogue, 21 November 2026. See E.~DeLaVi\~na's
+\href{https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/comments.json}{comment on Conjecture 256}
+and the
+\href{https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/ce256.png}{counterexample diagram}.
+
+\bibitem{prior256}
+Graffiti.pc Conjecture 256 repository contributors,
+\emph{Counterexamples to Graffiti.pc Conjecture 256 and a sharp total
+domination bound}, 19 November 2026.
+\href{https://github.com/srikant07-dev/graffiti-pc-conjecture-256/blob/314f74a234703f3860327586054c9fa9e08e45e7/paper.pdf}{Fixed manuscript}.
+
+\bibitem{code}
+C.~Zhang, \emph{Written on the Wall II 255 and 256:
+Lean formalizations of smallest counterexamples and sharp coefficients},
+2026. \href{\repobase/tree/67878cbe235830fc174bb13c0d03b77d104742f5}{Formal proofs
+and independent verification code}.
+
+\end{thebibliography}
+\endgroup
+\end{document}

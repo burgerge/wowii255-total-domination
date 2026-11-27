@@ -2,7 +2,9 @@
 
 **摘要。** Written on the Wall II 第 256 题的最小反例恰有 **14 个顶点**。将原不等式右侧的系数 2 改为普适常数后，最大的可用系数恰为 **1**。这一常数在连通二分图类中同样最优。本文给出两项结论的组合证明及完整 Lean 形式化，并保留 14 点和 59 点反例的 Lean 证书。
 
-设 $G$ 是至少有两个顶点的有限连通简单图。记 $n=|V(G)|$，$A$ 为最小度顶点集合，$N(v)$ 为顶点 $v$ 的开邻域，$N(A)=\bigcup_{v\in A}N(v)$。记 $\gamma_t$ 为总支配数，即使每个顶点都邻接所选顶点的最小集合大小。对每条边 $uv$ 定义 $B(uv)=N(u)\cup N(v)$，令 $M=\max_{uv\in E(G)}|B(uv)|$。原猜想断言 $\gamma_t M\ge 2|N(A)|$。[原目录第 256 题](https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/wowiiaii.pdf#page=149)
+设 $G$ 是至少有两个顶点的有限连通简单图。记 $n=|V(G)|$，$A$ 为最小度顶点集合，$N(v)$ 为顶点 $v$ 的开邻域，$N(A)=\bigcup_{v\in A}N(v)$。记 $\gamma_t$ 为总支配数，即使每个顶点都邻接所选顶点的最小集合大小。对每条边 $uv$ 定义 $B(uv)=N(u)\cup N(v)$，令 $M=\max_{uv\in E(G)}|B(uv)|$。原猜想断言 $\gamma_t M\ge 2|N(A)|$。[原目录第 256 题](https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/index.html)
+
+2026 年 11 月 21 日，Tony Newton 向目录提交了下文同构的 14 点反例、最小性证明及紧常数结果。11 月 19 日公开的另一篇稿件用含三角形的图族证明了一般连通图上的最优系数 1。本文给出完整推导，并将二分图上的系数最优性和最小阶结论形式化。[官网注释](https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/comments.json) · [官方例图](https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/ce256.png) · [一般图系数的在先稿件](https://github.com/srikant07-dev/graffiti-pc-conjecture-256/blob/314f74a234703f3860327586054c9fa9e08e45e7/paper.pdf)
 
 Derek Blair 的公开 PR #51 于 2026 年 11 月 25 日 18:04 UTC 创建，给出了 15 点反例与 Lean 证书。其图由两个各含三个三角形的友谊图构成，两侧的中心由一条长度为 2 的路径相连。[公开 PR](https://github.com/derekblair/math-proofs/pull/51) · [第 256 题证明](https://github.com/derekblair/math-proofs/blob/af6904cc3fa537b5c4dcea9561b24b69177c6ee1/research/lean-verified-2026-11-25/graffiti-256/PROOF.md)
 

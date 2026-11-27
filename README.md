@@ -2,9 +2,13 @@
 
 两题的最小反例阶数分别为 **11** 和 **14**，最大的有效系数均为 **1**。第 256 题的系数在连通二分图类中也最优。联合 Lean 证书参见下表，数学推导见[第 256 题研究说明](wowii256/README.md)。
 
+**联合英文预印本（张晨阳）**　[PDF](paper/wowii255-256.pdf) · [LaTeX 源码](paper/main.tex)
+
+第 256 题原目录记载了 Tony Newton 的 14 点见证和最小性证明。一般连通图上的系数 1 也已有公开证明。预印本给出两题的完整推导，说明第 256 题二分图构造和 Lean 证书覆盖的结论。[官网注释](https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/comments.json) · [11 月 19 日在先论文](https://github.com/srikant07-dev/graffiti-pc-conjecture-256/blob/314f74a234703f3860327586054c9fa9e08e45e7/paper.pdf)
+
 ## 第 255 题
 
-在有限、连通、至少有两个顶点的简单图中，令 $M$ 为相邻两点的开邻域并集的最大基数，$C$ 为中心顶点集合，$\gamma_t$ 为总支配数。[原猜想](https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/wowiiaii.pdf#page=148)断言 $\gamma_t M\ge 2|C|$。
+在有限、连通、至少有两个顶点的简单图中，令 $M$ 为相邻两点的开邻域并集的最大基数，$C$ 为中心顶点集合，$\gamma_t$ 为总支配数。[原目录第 255 题](https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/index.html)断言 $\gamma_t M\ge 2|C|$。
 
 - 最小反例恰有 11 个顶点，参数为 $(|C|,M,\gamma_t)=(11,7,3)$。编号 0、1、2 分别对应 $a,b,c$，3–6 与 7–10 分别为 $x_i,y_i$。边为 $ab,bc,ax_i,x_iy_i,y_ic$ 及所有 $x_ix_j$。
 - 十阶及以下的图满足更强的 $\gamma_t M\ge 2|V|$。证明用度数约束和最小总支配集的邻域覆盖。
