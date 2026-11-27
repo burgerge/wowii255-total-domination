@@ -1,10 +1,10 @@
 # Written on the Wall II 第 255、256 题
 
-两题的最小反例阶数分别为 **11** 和 **14**，最大的有效系数均为 **1**。第 256 题的系数在连通二分图类中也最优。联合 Lean 证书参见下表，数学推导见[第 256 题研究说明](wowii256/README.md)。
+本仓库提供第 255、256 题的 Lean 证明和复验脚本。两题的最小反例阶数分别为 **11** 和 **14**，最大的有效系数均为 **1**。第 256 题的系数在连通二分图类中也最优。
 
-**联合英文预印本（张晨阳）**　[PDF](paper/wowii255-256.pdf) · [LaTeX 源码](paper/main.tex)
+联合预印本已于 2026 年 11 月 27 日撤出当前发布版本。
 
-第 256 题原目录记载了 Tony Newton 的 14 点见证和最小性证明。一般连通图上的系数 1 也已有公开证明。预印本给出两题的完整推导，说明第 256 题二分图构造和 Lean 证书覆盖的结论。[官网注释](https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/comments.json) · [11 月 19 日在先论文](https://github.com/srikant07-dev/graffiti-pc-conjecture-256/blob/314f74a234703f3860327586054c9fa9e08e45e7/paper.pdf)
+第 256 题原目录记载了 Tony Newton 的 14 点见证和最小性证明。一般连通图上的系数 1 也已有公开证明。[官网注释](https://www.uhd.edu/academics/sciences/mathematics-statistics/wowii/files/comments.json) · [11 月 19 日在先论文](https://github.com/srikant07-dev/graffiti-pc-conjecture-256/blob/314f74a234703f3860327586054c9fa9e08e45e7/paper.pdf)
 
 ## 第 255 题
 
@@ -14,7 +14,7 @@
 - 十阶及以下的图满足更强的 $\gamma_t M\ge 2|V|$。证明用度数约束和最小总支配集的邻域覆盖。
 - 最大普适系数为 $1$。有序对关联图给出令 $\gamma_tM/|C|$ 趋于 $1$ 的无限二分图族。另保留原来的 184 顶点证书。
 
-Derek Blair 已公开给出与上述 11 点图同构的反例。这里另给出最小阶和最优普适系数的证明。[Blair 的在先反证](https://github.com/derekblair/math-proofs/blob/af6904cc3fa537b5c4dcea9561b24b69177c6ee1/research/lean-verified-2026-11-25/graffiti-255/PROOF255.md)
+Derek Blair 已公开给出与上述 11 点图同构的反例，也已有公开的无限反例族。[Blair 的在先反证](https://github.com/derekblair/math-proofs/blob/af6904cc3fa537b5c4dcea9561b24b69177c6ee1/research/lean-verified-2026-11-25/graffiti-255/PROOF255.md) · [在先反例族](https://github.com/f8bsd9yqgp-maker/Solved-conjectures-/blob/9a49179c1217e4e260e24b9d5d506432d1b328eb/proofs/graffiti-pc-255/README.md)
 
 ## 复现环境与 Lean 证明
 
@@ -43,16 +43,6 @@ lake exe cache get
 lake build FormalConjecturesForMathlib.Combinatorics.SimpleGraph.Domination
 Pop-Location
 pwsh -File ./Verify.ps1 -Repository ./formal-conjectures
-```
-
-## 独立整数复核
-
-Python 3 脚本从组合规则重建图并核对精确整数参数。十阶及以下的结构论证见 Lean 证明，Python 另检查其整数推论。
-
-```sh
-python verify_minimum.py
-python verify_pair_family.py
-python -m unittest discover -v
 ```
 
 OpenAI Codex 参与了构造、证明推导、Lean 形式化和验证。
