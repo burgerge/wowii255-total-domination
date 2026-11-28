@@ -1,4 +1,6 @@
-# Written on the Wall II 第 255、256 题
+# Lean 4 Certificates for Graffiti WOWII Problems 255 and 256
+
+Written on the Wall II 第 255、256 题的图论证明证书。
 
 本仓库提供第 255、256 题的 Lean 证明和复验脚本。两题的最小反例阶数分别为 **11** 和 **14**，最大的有效系数均为 **1**。第 256 题的系数在连通二分图类中也最优。
 
